@@ -1,0 +1,6 @@
+services:
+  nats:
+    container_name: nats
+    image: nats:2.10.4-alpine
+    ports:
+      - "4222:4222"
