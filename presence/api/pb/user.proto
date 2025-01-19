@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/chatroom/presence/api/pb";
+
+
+message UserSignUpFirstRequest {
+    string firstName = 1 [json_name = "firstName"];
+    string lastName = 2 [json_name = "lastName"];
+    string email = 3 [json_name = "email"];
+    string password = 4 [json_name = "password"];
+
+}
+message UserSignInRequest {
+    string email = 1 [json_name = "email"];
+    string password = 2 [json_name = "password"];
+}
+
+
+import "google/protobuf/timestamp.proto";
+message User {
+    uint64 id = 1;
+    // uuid
+    string firstName = 2;
+    string lastName = 3;
+    string email = 4;             
+    string passwordHash = 5;     
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp deleted_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
+}
