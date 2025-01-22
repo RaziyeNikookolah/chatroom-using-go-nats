@@ -1,6 +1,30 @@
+version: '3.8'
+
 services:
   nats:
     container_name: nats
     image: nats:2.10.4-alpine
     ports:
       - "4222:4222"
+      - "8222:8222" 
+    command: --jetstream 
+    restart: unless-stopped
+    networks:
+      - chatroom-network
+      
+  postgres:
+    image: 'postgres:latest'
+    container_name: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - chatroom-network
+    ports:
+      - '${POSTGRES_PORT}:5432'
+
+
+networks:
+  chatroom-network:
+    driver: bridge

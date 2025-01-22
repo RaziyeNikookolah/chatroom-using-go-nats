@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb";
+
+
+message UserSignUpRequest {
+    string username = 1 [json_name = "username"];
+    string password = 2 [json_name = "password"];
+    string email = 3 [json_name = "email"];
+}
+
+message UserSignUpResponse {
+    string Token = 1 [json_name = "token"];
+}
+ 
+
+message UserSignInRequest {
+    string username = 1;
+    string password = 2;
+}
+
+message UserSignInResponse {
+    string Token = 1 [json_name = "token"];
+}
+
+message User {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+}
