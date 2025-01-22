@@ -21,6 +21,12 @@ type (
 	Username string
 	Password string
 )
+type RegisterResponse struct {
+	Token string
+}
+type LoginResponse struct {
+	Token string
+}
 
 type User struct {
 	ID        UserID

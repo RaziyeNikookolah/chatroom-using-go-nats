@@ -36,7 +36,7 @@ var (
 	ErrInvalidUserPassword    = errors.New("invalid password")
 )
 
-func (s *UserService) SignUp(ctx context.Context, req *pb.UserSignUpRequest) (*pb.UserSignUpResponse, error) {
+func (s *UserService) SignUp(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	userID, err := s.svc.CreateUser(ctx, domain.User{
 		Username: domain.Username(req.GetUsername()),
 		Email:    domain.Email(req.GetEmail()),
@@ -52,12 +52,12 @@ func (s *UserService) SignUp(ctx context.Context, req *pb.UserSignUpRequest) (*p
 		return nil, err
 	}
 
-	return &pb.UserSignUpResponse{
+	return &pb.RegisterResponse{
 		Token: token,
 	}, nil
 }
 
-func (s *UserService) SignIn(ctx context.Context, req *pb.UserSignInRequest) (*pb.UserSignInResponse, error) {
+func (s *UserService) SignIn(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	user, err := s.svc.GetUserByUsernamePassword(ctx, domain.Username(req.GetUsername()),
 		domain.NewPassword(req.GetPassword()),
 	)
@@ -78,7 +78,7 @@ func (s *UserService) SignIn(ctx context.Context, req *pb.UserSignInRequest) (*p
 		return nil, err
 	}
 
-	return &pb.UserSignInResponse{
+	return &pb.LoginResponse{
 		Token: token,
 	}, nil
 }

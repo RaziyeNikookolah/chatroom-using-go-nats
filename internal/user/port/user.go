@@ -2,8 +2,14 @@ package port
 
 import (
 	"context"
+	"errors"
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/domain"
+)
+
+var (
+	ErrUserAlreadyExist  = errors.New("user already exists")
+	ErrInvalidCredential = errors.New("invalid username or password")
 )
 
 type Repo interface {

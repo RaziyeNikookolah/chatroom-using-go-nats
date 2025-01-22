@@ -79,6 +79,9 @@ func (a *app) setDB() error {
 	}
 
 	a.db = db
+
+	postgres.AddUuidExtension(db)
+	postgres.GormMigrations(db)
 	return nil
 }
 
