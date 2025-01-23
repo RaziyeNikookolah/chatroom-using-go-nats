@@ -1,7 +1,7 @@
 package grpc
 
 // import (
-// 	"github.com/onlineTraveling/bank/pkg/ports"
+// 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/ports"
 // )
 
 // type GRPCAuthClient struct {

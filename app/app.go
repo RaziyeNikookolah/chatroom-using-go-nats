@@ -2,15 +2,17 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/config"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom"
 	chatroomPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom/port"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user"
 	userPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/nats"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/storage"
 
-	// "github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/cache"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/ports"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/postgres"
 	"gorm.io/gorm"
 
@@ -22,6 +24,7 @@ type app struct {
 	cfg             config.Config
 	userService     userPort.Service
 	chatroomService chatroomPort.Service
+	messageBroker   ports.IMessageBroker
 	// redisProvider   cache.Provider
 }
 
@@ -95,8 +98,25 @@ func NewApp(cfg config.Config) (App, error) {
 	if err := a.setDB(); err != nil {
 		return nil, err
 	}
+	a.setMessageBroker()
 
 	return a, nil
+}
+func (a *app) MessageBroker() ports.IMessageBroker {
+	return a.messageBroker
+}
+
+func (a *app) setMessageBroker() {
+	natsCfg := a.cfg.Nats
+	if a.messageBroker != nil {
+		return
+	}
+	nats, err := nats.NewNATS(fmt.Sprintf("%s:%d", natsCfg.Host, natsCfg.Port))
+	if err != nil {
+		return
+	}
+	a.messageBroker = nats
+
 }
 
 func NewMustApp(cfg config.Config) App {

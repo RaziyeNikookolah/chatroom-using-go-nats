@@ -6,6 +6,7 @@ import (
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/config"
 	chatroomPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom/port"
 	userPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/ports"
 
 	"gorm.io/gorm"
 )
@@ -15,4 +16,5 @@ type App interface {
 	ChatroomService(ctx context.Context) chatroomPort.Service
 	DB() *gorm.DB
 	Config() config.Config
+	MessageBroker() ports.IMessageBroker
 }
