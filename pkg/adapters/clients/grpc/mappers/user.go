@@ -16,3 +16,10 @@ func RegisterResponseProtoToRegisterResponseDomain(m *pb.RegisterResponse) (*dom
 func LoginResponseProtoToLoginResponseDomain(m *pb.LoginResponse) (*domain.LoginResponse, error) {
 	return &domain.LoginResponse{Token: m.Token}, nil
 }
+func UserClaimResponseProtoToUserResponseDomain(m *pb.UserClaimResponse) (*domain.UserClaim, error) {
+	return &domain.UserClaim{
+		Username: m.Username,
+		Email:    m.Email,
+		ID:       m.Id,
+	}, nil
+}

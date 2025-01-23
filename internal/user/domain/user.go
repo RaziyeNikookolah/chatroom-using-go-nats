@@ -27,7 +27,11 @@ type RegisterResponse struct {
 type LoginResponse struct {
 	Token string
 }
-
+type UserClaim struct {
+	Username string
+	ID       string
+	Email    string
+}
 type User struct {
 	ID        UserID
 	CreatedAt time.Time

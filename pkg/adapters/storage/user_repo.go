@@ -8,6 +8,7 @@ import (
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/storage/mapper"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/storage/types"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/jwt"
 	"github.com/google/uuid"
 
 	"gorm.io/gorm"
@@ -21,6 +22,20 @@ func NewUserRepo(db *gorm.DB) port.Repo {
 	return &userRepo{
 		db: db,
 	}
+}
+
+// GetUserClaimWithToken implements port.Repo.
+func (r *userRepo) GetUserClaimWithToken(ctx context.Context, token string, secret string) (*jwt.UserClaims, error) {
+	claim, err := jwt.ParseToken(token, []byte(secret))
+	if err != nil {
+		return nil, err
+	}
+	return &jwt.UserClaims{
+		UserID:   claim.UserID,
+		Username: claim.Username,
+		Email:    claim.Email,
+	}, nil
+
 }
 
 func (r *userRepo) Create(ctx context.Context, userDomain domain.User) (domain.UserID, error) {

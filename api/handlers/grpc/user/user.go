@@ -41,6 +41,16 @@ func (g *GRPCUserHandler) Login(ctx context.Context, regUsr *pb.LoginRequest) (*
 	}
 	return response, nil
 }
+func (g *GRPCUserHandler) GetUserClaimWithToken(ctx context.Context, t *pb.TokenRequest) (*pb.UserClaimResponse, error) {
+	response, err := g.userService.GetUserClaimWithToken(ctx, t)
+	if err != nil {
+		if errors.Is(err, port.ErrInvalidToken) {
+			return nil, status.Errorf(codes.Unknown, "invalid token")
+		}
+		return nil, status.Errorf(codes.Internal, "%s", err.Error())
+	}
+	return response, nil
+}
 
 type HealthServer struct {
 	grpc_health_v1.HealthServer

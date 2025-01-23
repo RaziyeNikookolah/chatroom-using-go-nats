@@ -8,6 +8,7 @@ import (
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/domain"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/jwt"
 	"github.com/google/uuid"
 )
 
@@ -19,6 +20,20 @@ var (
 
 type service struct {
 	repo port.Repo
+}
+
+// GetUserClaimWithToken implements port.Service.
+func (s *service) GetUserClaimWithToken(ctx context.Context, token string, secret string) (*jwt.UserClaims, error) {
+	claim, err := s.repo.GetUserClaimWithToken(ctx, token, secret)
+	if err != nil {
+		return nil, err
+	}
+
+	if claim == nil {
+		return nil, ErrUserNotFound
+	}
+
+	return claim, nil
 }
 
 // GetUserByUUID implements port.Service.

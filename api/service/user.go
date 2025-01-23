@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/hex"
+	// jwt2 "github.com/golang-jwt/jwt/v5"
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/domain"
 	userPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/jwt"
+	"github.com/google/uuid"
 )
 
 type UserService struct {
@@ -47,7 +47,15 @@ func (s *UserService) SignUp(ctx context.Context, req *pb.RegisterRequest) (*pb.
 		return nil, err
 	}
 
-	token, err := s.createTokens(userID)
+	token, err := jwt.CreateToken([]byte(s.authSecret), &jwt.UserClaims{
+		// RegisteredClaims: jwt2.RegisteredClaims{
+		// 	// ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
+		// },
+
+		UserID:   uuid.UUID(userID),
+		Username: req.Username,
+		Email:    req.Email,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -73,28 +81,35 @@ func (s *UserService) SignIn(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, ErrInvalidUserPassword
 	}
 
-	token, err := s.createTokens(user.ID)
+	token, err := jwt.CreateToken([]byte(s.authSecret), &jwt.UserClaims{
+		// RegisteredClaims: jwt2.RegisteredClaims{
+		// 	// ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
+		// },
+
+		UserID:   uuid.UUID(user.ID),
+		Username: req.Username,
+		Email:    string(user.Email),
+	})
 	if err != nil {
 		return nil, err
 	}
-
 	return &pb.LoginResponse{
 		Token: token,
 	}, nil
 }
+func (s *UserService) GetUserClaimWithToken(ctx context.Context, req *pb.TokenRequest) (*pb.UserClaimResponse, error) {
+	user, err := s.svc.GetUserClaimWithToken(ctx, req.GetToken(), s.authSecret)
+	if err != nil {
+		return nil, err
+	}
 
-func (s *UserService) createTokens(userID domain.UserID) (token string, err error) {
-	token = generateHMAC(userID.ConvStr(), s.authSecret)
-	return
-}
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
 
-func generateHMAC(data, secretKey string) string {
-	h := hmac.New(sha256.New, []byte(secretKey))
-	h.Write([]byte(data))
-	return hex.EncodeToString(h.Sum(nil))
-}
-
-func verifyHMAC(data, secretKey, expectedMAC string) bool {
-	calculatedMAC := generateHMAC(data, secretKey)
-	return hmac.Equal([]byte(calculatedMAC), []byte(expectedMAC))
+	return &pb.UserClaimResponse{
+		Username: string(user.Username),
+		Email:    string(user.Email),
+		Id:       user.UserID.String(),
+	}, nil
 }

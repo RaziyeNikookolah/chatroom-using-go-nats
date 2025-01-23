@@ -7,6 +7,7 @@ option go_package = "github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb";
 service UserService {
   rpc Register (RegisterRequest) returns (RegisterResponse) {}
   rpc Login (LoginRequest) returns (LoginResponse) {}
+  rpc GetUserClaimWithToken (TokenRequest) returns (UserClaimResponse) {}
 }
 
 
@@ -14,6 +15,9 @@ message RegisterRequest {
     string username = 1 [json_name = "username"];
     string password = 2 [json_name = "password"];
     string email = 3 [json_name = "email"];
+}
+message TokenRequest{
+    string Token=1;
 }
 
 message RegisterResponse {
@@ -31,6 +35,11 @@ message LoginResponse {
 }
 
 message User {
+    string id = 1;
+    string username = 2;
+    string email = 3;
+}
+message UserClaimResponse {
     string id = 1;
     string username = 2;
     string email = 3;
