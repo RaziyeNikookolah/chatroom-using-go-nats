@@ -7,5 +7,8 @@ import (
 )
 
 type Service interface {
-	Send(ctx context.Context, chatroom *domain.Chatroom) error
+	SendMessage(ctx context.Context, message *domain.MessageToSend) error
+	SubscribeUser(ctx context.Context, UserID string) error
+	ShowMessages(ctx context.Context, UserID string) (*domain.MessagesToShow, error)
+	GetActiveUsers(ctx context.Context) (*domain.ActiveUsers, error)
 }

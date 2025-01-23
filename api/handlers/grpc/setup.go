@@ -39,6 +39,10 @@ func Run(cfg config.Config, app app.App) {
 	userGrpcHandler := user.NewGRPCUserHandler(*userHandler)
 	pb.RegisterUserServiceServer(grpcServer, userGrpcHandler)
 
+	chatroomHandler := service.NewChatroomService(app.UserService(context.Background()))
+	userGrpcHandler := user.NewGRPCUserHandler(*userHandler)
+	pb.RegisterUserServiceServer(grpcServer, userGrpcHandler)
+
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

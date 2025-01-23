@@ -34,6 +34,8 @@ var (
 	ErrUserOnCreate           = user.ErrUserOnCreate
 	ErrUserNotFound           = user.ErrUserNotFound
 	ErrInvalidUserPassword    = errors.New("invalid password")
+	ErrNoMessage              = errors.New("no message found")
+	ErrNoOneIsActiveNow       = errors.New("no one is active now")
 )
 
 func (s *UserService) SignUp(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {

@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/config"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom"
+	chatroomPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom/port"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user"
 	userPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/port"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/storage"
@@ -16,10 +18,10 @@ import (
 )
 
 type app struct {
-	db          *gorm.DB
-	cfg         config.Config
-	userService userPort.Service
-	// chatroomService chatroomPort.Service
+	db              *gorm.DB
+	cfg             config.Config
+	userService     userPort.Service
+	chatroomService chatroomPort.Service
 	// redisProvider   cache.Provider
 }
 
@@ -43,22 +45,22 @@ func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
 	return user.NewService(storage.NewUserRepo(db))
 }
 
-// func (a *app) chatroomServiceWithDB(db *gorm.DB) chatroomPort.Service {
-// 	return chatroom.NewService(storage.NewChatroomRepo(db),
-// 		user.NewService(storage.NewUserRepo(db)))
-// }
+func (a *app) chatroomServiceWithDB(db *gorm.DB) chatroomPort.Service {
+	return chatroom.NewChatroomService(storage.NewChatroomRepo(db),
+		user.NewService(storage.NewUserRepo(db)))
+}
 
-// func (a *app) ChatroomService(ctx context.Context) chatroomPort.Service {
-// 	db := appCtx.GetDB(ctx)
-// 	if db == nil {
-// 		if a.chatroomService == nil {
-// 			a.chatroomService = a.chatroomServiceWithDB(a.db)
-// 		}
-// 		return a.chatroomService
-// 	}
+func (a *app) ChatroomService(ctx context.Context) chatroomPort.Service {
+	db := appCtx.GetDB(ctx)
+	if db == nil {
+		if a.chatroomService == nil {
+			a.chatroomService = a.chatroomServiceWithDB(a.db)
+		}
+		return a.chatroomService
+	}
 
-// 	return a.chatroomServiceWithDB(db)
-// }
+	return a.chatroomServiceWithDB(db)
+}
 
 func (a *app) Config() config.Config {
 	return a.cfg
