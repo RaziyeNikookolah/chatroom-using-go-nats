@@ -9,6 +9,8 @@ services:
       - "8222:8222" 
     command: --jetstream 
     restart: unless-stopped
+    volumes:
+      - ./nats-data:/data
     networks:
       - chatroom-network
       
