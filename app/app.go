@@ -46,8 +46,8 @@ func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
 }
 
 func (a *app) chatroomServiceWithDB(db *gorm.DB) chatroomPort.Service {
-	return chatroom.NewChatroomService(storage.NewChatroomRepo(db),
-		user.NewService(storage.NewUserRepo(db)))
+	return chatroom.NewChatroomService(storage.NewChatroomRepo(db))
+	// user.NewService(storage.NewUserRepo(db)))
 }
 
 func (a *app) ChatroomService(ctx context.Context) chatroomPort.Service {

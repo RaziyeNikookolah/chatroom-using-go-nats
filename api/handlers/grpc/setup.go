@@ -9,6 +9,7 @@ import (
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/app"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/config"
 
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/handlers/grpc/chatroom"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/handlers/grpc/user"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/service"
@@ -30,18 +31,15 @@ func Run(cfg config.Config, app app.App) {
 
 	reflection.Register(grpcServer)
 
-	log.Println("User | GRPC server started..")
-
-	// vHandler := service.NewVehicleService(app.VehicleService())
-	// d := vehicle.NewGRPCVehicleHandler(*vHandler)
+	log.Println("GRPC server started..")
 
 	userHandler := service.NewUserService(app.UserService(context.Background()), cfg.Server.Secret)
 	userGrpcHandler := user.NewGRPCUserHandler(*userHandler)
 	pb.RegisterUserServiceServer(grpcServer, userGrpcHandler)
 
-	chatroomHandler := service.NewChatroomService(app.UserService(context.Background()))
-	userGrpcHandler := user.NewGRPCUserHandler(*userHandler)
-	pb.RegisterUserServiceServer(grpcServer, userGrpcHandler)
+	chatroomHandler := service.NewChatroomService(app.ChatroomService(context.Background()))
+	chatroomGrpcHandler := chatroom.NewGRPCChatroomHandler(*chatroomHandler)
+	pb.RegisterChatroomServiceServer(grpcServer, chatroomGrpcHandler)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
