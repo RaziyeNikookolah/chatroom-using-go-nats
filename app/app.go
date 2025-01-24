@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/config"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom"
@@ -111,12 +112,11 @@ func (a *app) setMessageBroker() {
 	if a.messageBroker != nil {
 		return
 	}
-	nats, err := nats.NewNATS(fmt.Sprintf("%s:%d", natsCfg.Host, natsCfg.Port))
+	natsClient, err := nats.NewNATS(fmt.Sprintf("%s:%d", natsCfg.Host, natsCfg.Port))
 	if err != nil {
-		return
+		log.Fatalf("Error creating NATS client: %v", err)
 	}
-	a.messageBroker = nats
-
+	a.messageBroker = natsClient
 }
 
 func NewMustApp(cfg config.Config) App {
