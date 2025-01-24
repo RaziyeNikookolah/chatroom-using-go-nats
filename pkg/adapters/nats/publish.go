@@ -11,7 +11,6 @@ import (
 )
 
 func (n *NATS) Publish(subject, msg string) {
-	print(11111111, "\n")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

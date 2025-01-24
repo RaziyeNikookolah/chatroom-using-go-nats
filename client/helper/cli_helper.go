@@ -111,8 +111,8 @@ func ViewSubMenu(scanner *bufio.Scanner) {
 		color.Style{color.FgLightBlue, color.OpBold}.Println(`
 -------------------------------------
 👀 View Submenu:
-1. View All Messages
-2. View Last Message
+1. View Messages
+2. View Active users Message
 3. Back to Main Menu
 -------------------------------------
 		`)
@@ -125,7 +125,7 @@ func ViewSubMenu(scanner *bufio.Scanner) {
 		case "1":
 			ViewAllMessages()
 		case "2":
-			ViewLastMessage()
+			ViewActiveUsers()
 		case "3":
 			color.Green.Println("\n🔙 Returning to the main menu...")
 			WelcomeBanner() // Show main menu banner again
@@ -169,18 +169,19 @@ func AuthenticateSubMenu(scanner *bufio.Scanner, ctx context.Context, conn *grpc
 
 // View all messages
 func ViewAllMessages() {
-	// color.Style{color.FgYellow, color.OpItalic}.Println("\n💬 Messages in the chatroom:")
-	// if len(publicChatroom.Messages) == 0 {
-	// 	color.Red.Println("❌ No messages in the chatroom yet.")
-	// } else {
-	// 	for i, message := range publicChatroom.Messages {
-	// 		color.Cyan.Printf("%d: %s\n", i+1, message)
-	// 	}
-	// }
+	publicChatroomMessages := ""
+	color.Style{color.FgYellow, color.OpItalic}.Println("\n💬 Messages in the chatroom:")
+	if len(publicChatroomMessages) == 0 {
+		color.Red.Println("❌ No messages in the chatroom yet.")
+	} else {
+		for i, message := range publicChatroomMessages {
+			color.Cyan.Printf("%d: %s\n", i+1, message)
+		}
+	}
 }
 
 // View last message
-func ViewLastMessage() {
+func ViewActiveUsers() {
 	// if len(publicChatroom.Messages) == 0 {
 	// 	color.Red.Println("\n❌ No messages in the chatroom yet.")
 	// } else {
