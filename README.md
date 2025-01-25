@@ -1,7 +1,5 @@
-# Chatroom-using-go-nats
+# A Basic Public Chatroom using Go, NATS and Postgresql
 
-A Basic Public chatroom with Go, Postgresql and Nats
-Chatroom Project
 ================
 
 ## Features
