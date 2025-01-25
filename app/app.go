@@ -51,7 +51,6 @@ func (a *app) userServiceWithDB(db *gorm.DB) userPort.Service {
 
 func (a *app) chatroomServiceWithDB(db *gorm.DB) chatroomPort.Service {
 	return chatroom.NewChatroomService(storage.NewChatroomRepo(db))
-	// user.NewService(storage.NewUserRepo(db)))
 }
 
 func (a *app) ChatroomService(ctx context.Context) chatroomPort.Service {
@@ -114,7 +113,7 @@ func (a *app) setMessageBroker() {
 	}
 	natsClient, err := nats.NewNATS(fmt.Sprintf("%s:%d", natsCfg.Host, natsCfg.Port))
 	if err != nil {
-		log.Fatalf("Error creating NATS client: %v", err)
+		log.Fatalf("Error creating NATS Server: %v", err)
 	}
 	a.messageBroker = natsClient
 }

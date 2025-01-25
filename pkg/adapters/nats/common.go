@@ -15,7 +15,7 @@ type NATS struct {
 // NewNATS creates a new NATS instance and connects to the NATS server.
 func NewNATS(serverURL string) (*NATS, error) {
 	// Connect to the NATS server
-	nc, err := nats.Connect(serverURL, nats.Name("NATS Client"))
+	nc, err := nats.Connect(serverURL, nats.Name("NATS Server"))
 	if err != nil {
 		return nil, err
 	}

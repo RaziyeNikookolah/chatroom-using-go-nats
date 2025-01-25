@@ -5,11 +5,6 @@ import (
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/user/domain"
 )
 
-//	func RegisterResponseDomainToRegisterResponseProto(user *domain.User) *pb.RegisterResponse {
-//		return &pb.RegisterResponse{
-//			Token: ,
-//		}
-//	}
 func RegisterResponseProtoToRegisterResponseDomain(m *pb.RegisterResponse) (*domain.RegisterResponse, error) {
 	return &domain.RegisterResponse{Token: m.Token}, nil
 }

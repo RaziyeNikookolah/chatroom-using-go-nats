@@ -11,5 +11,5 @@ ENV TZ=Asia/Tehran
 RUN apk --no-cache add ca-certificates
 WORKDIR /app/
 COPY --from=builder /app/server .
-EXPOSE 8080
+EXPOSE 50051
 CMD ["./server"]

@@ -3,10 +3,10 @@ package ports
 import "context"
 
 type IMessageBroker interface {
-	Publish(subject, msg string)
-	Consume(subject, consumerName string)
+	Publish(msg string)
+	Consume(consumerName string)
 	SetupStream()
-	SetupConsumer(subject string)
+	SetupConsumer()
 	SubscribeToChat(ctx context.Context, username string)
-	GetAllMessages(subject string)
+	GetAllMessages() ([]string, error)
 }

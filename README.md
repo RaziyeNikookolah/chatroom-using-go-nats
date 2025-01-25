@@ -1,2 +1,3 @@
-# DistributedChatroom-using-go-nats
-A distributed chatroom with go and nats
+# Chatroom-using-go-nats
+
+A Basic Public chatroom with go and nats

@@ -15,17 +15,14 @@ import (
 )
 
 type UserService struct {
-	svc userPort.Service
-	// chatroomSvc chatroomPort.Service
+	svc        userPort.Service
 	authSecret string
 }
 
 func NewUserService(svc userPort.Service, authSecret string) *UserService {
-	//, chatroomSvc chatroomPort.Service) *UserService {
 	return &UserService{
 		svc:        svc,
 		authSecret: authSecret,
-		// chatroomSvc: chatroomSvc,
 	}
 }
 
@@ -50,9 +47,6 @@ func (s *UserService) SignUp(ctx context.Context, req *pb.RegisterRequest) (*pb.
 	}
 
 	token, err := jwt.CreateToken([]byte(s.authSecret), &jwt.UserClaims{
-		// RegisteredClaims: jwt2.RegisteredClaims{
-		// 	// ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
-		// },
 
 		UserID:   uuid.UUID(userID),
 		Username: req.Username,
@@ -84,9 +78,6 @@ func (s *UserService) SignIn(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	}
 
 	token, err := jwt.CreateToken([]byte(s.authSecret), &jwt.UserClaims{
-		// RegisteredClaims: jwt2.RegisteredClaims{
-		// 	// ExpiresAt: jwt2.NewNumericDate(helperTime.AddMinutes(s.expMin, true)),
-		// },
 
 		UserID:   uuid.UUID(user.ID),
 		Username: req.Username,

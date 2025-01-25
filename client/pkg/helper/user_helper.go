@@ -10,8 +10,8 @@ import (
 
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/client/domain"
+	"github.com/RaziyeNikookolah/chatroom-using-go-nats/client/pkg/grpc"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/pkg/adapters/clients/grpc/mappers"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -19,9 +19,11 @@ const (
 	sessionFile = "session.txt" // File to store session data
 )
 
-func LoginUsingGrpc(ctx context.Context, conn *grpc.ClientConn, user domain.User) (domain.Token, error) {
+func LoginUsingGrpc(ctx context.Context, user domain.User) (domain.Token, error) {
+	grpcConn := grpc.GetGrpcConnection()
+	defer grpcConn.Close()
 	// Create a new UserService client
-	client := pb.NewUserServiceClient(conn)
+	client := pb.NewUserServiceClient(grpcConn)
 
 	in := &pb.LoginRequest{
 		Username: user.Username,
@@ -43,9 +45,11 @@ func LoginUsingGrpc(ctx context.Context, conn *grpc.ClientConn, user domain.User
 	// log.Print("User logged in successfully")
 	return domain.Token(token.Token), nil
 }
-func RegisterUsingGrpc(ctx context.Context, conn *grpc.ClientConn, user domain.User) (domain.Token, error) {
+func RegisterUsingGrpc(ctx context.Context, user domain.User) (domain.Token, error) {
+	grpcConn := grpc.GetGrpcConnection()
+	defer grpcConn.Close()
 	// Create a new UserService client
-	client := pb.NewUserServiceClient(conn)
+	client := pb.NewUserServiceClient(grpcConn)
 
 	// Prepare the request
 	in := &pb.RegisterRequest{
@@ -70,9 +74,11 @@ func RegisterUsingGrpc(ctx context.Context, conn *grpc.ClientConn, user domain.U
 	// log.Print("User registered successfully")
 	return domain.Token(token.Token), nil
 }
-func GetUserClaimUsingGrpc(ctx context.Context, conn *grpc.ClientConn, token string) (domain.UserClaim, error) {
+func GetUserClaimUsingGrpc(ctx context.Context, token string) (domain.UserClaim, error) {
+	grpcConn := grpc.GetGrpcConnection()
+	defer grpcConn.Close()
 	// Create a new UserService client
-	client := pb.NewUserServiceClient(conn)
+	client := pb.NewUserServiceClient(grpcConn)
 
 	// Prepare the request
 	in := &pb.TokenRequest{
@@ -104,9 +110,9 @@ func SessionExists() bool {
 	return err == nil
 }
 
-func RestoreSession(ctx context.Context, conn *grpc.ClientConn) (domain.UserClaim, error) {
+func RestoreSession(ctx context.Context) (domain.UserClaim, error) {
 	data, _ := os.ReadFile(sessionFile)
-	user, err := GetUserClaimUsingGrpc(ctx, conn, string(data))
+	user, err := GetUserClaimUsingGrpc(ctx, string(data))
 	if err != nil {
 		return domain.UserClaim{}, err
 	}
@@ -152,36 +158,8 @@ func SaveSession(token domain.Token) {
 //		fmt.Println("Token saved to:", sessionFile)
 //		return nil
 //	}
-func HandleAuthentication(ctx context.Context, conn *grpc.ClientConn, scanner *bufio.Scanner) (domain.Token, error) { // user does not have token -> login or register required
-	// reader := bufio.NewReader(os.Stdin)
-	// fmt.Println("Welcome to the Chatroom!")
-	// fmt.Print("Do you have an account? (yes/no): ")
-	return AuthenticateSubMenu(scanner, ctx, conn)
-	// choice, _ := reader.ReadString('\n')
-	// choice = strings.TrimSpace(choice)
-	// for {
-	// 	if choice == "1" {
-	// 		token, err := SignUpUser(ctx, conn)
-	// 		if err != nil {
-	// 			log.Print(err)
-	// 			return "", err
-	// 		}
-	// 		return token, nil
-	// 	} else if choice == "2" {
-	// 		token, err := SignInUser(ctx, conn)
-	// 		if err != nil {
-	// 			log.Print(err)
-	// 			return "", err
-	// 		}
-	// 		return token, nil
-	// 	} else {
-	// 		// AuthenticateSubMenu(scanner, ctx, conn)
 
-	// 	}
-	// }
-}
-
-func SignUpUser(ctx context.Context, conn *grpc.ClientConn) (domain.Token, error) {
+func SignUpUser(ctx context.Context, clientUsername *string) (domain.Token, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println(">> Sign Up")
 
@@ -198,15 +176,16 @@ func SignUpUser(ctx context.Context, conn *grpc.ClientConn) (domain.Token, error
 	password = strings.TrimSpace(password)
 
 	user := domain.User{Username: username, Email: email, Password: password}
-	token, err := RegisterUsingGrpc(ctx, conn, user)
+	token, err := RegisterUsingGrpc(ctx, user)
 	if err != nil {
 		return domain.Token(""), err
 	}
+	*clientUsername = username
 	fmt.Println("Sign-up successful! You are logged in.")
 	return domain.Token(token), nil
 }
 
-func SignInUser(ctx context.Context, conn *grpc.ClientConn) (domain.Token, error) {
+func SignInUser(ctx context.Context, clientUsername *string) (domain.Token, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println(">>Login")
 	fmt.Print("Enter your username: ")
@@ -218,10 +197,11 @@ func SignInUser(ctx context.Context, conn *grpc.ClientConn) (domain.Token, error
 	password = strings.TrimSpace(password)
 	user := domain.User{Username: username, Email: "", Password: password}
 
-	token, err := LoginUsingGrpc(ctx, conn, user)
+	token, err := LoginUsingGrpc(ctx, user)
 	if err != nil {
 		return domain.Token(""), err
 	}
+	*clientUsername = username
 	fmt.Println("Sign-in successful! You are logged in.")
 	return domain.Token(token), nil
 }

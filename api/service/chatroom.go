@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	// jwt2 "github.com/golang-jwt/jwt/v5"
-
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb"
 	"github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom/domain"
 	chatroomPort "github.com/RaziyeNikookolah/chatroom-using-go-nats/internal/chatroom/port"
@@ -16,7 +14,6 @@ type ChatroomService struct {
 }
 
 func NewChatroomService(svc chatroomPort.Service) *ChatroomService {
-	//, chatroomSvc chatroomPort.Service) *ChatroomService {
 	return &ChatroomService{
 		svc: svc,
 	}
