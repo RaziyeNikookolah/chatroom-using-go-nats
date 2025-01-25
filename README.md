@@ -30,9 +30,10 @@ Follow these steps to set up and run the project:
 
 1.  git clone https://github.com/RaziyeNikookolah/chatroom-using-go-nats.git
 2.  cd chatroom-using-go-nats.git
-3.  docker-compose up --build
-4.  go run ./cmd/chatroom/main.go
-5.  go run ./client/cmd/command-line-interface/main.go
+3.  run go mod tidy
+4.  docker-compose up --build
+5.  go run ./cmd/chatroom/main.go
+6.  go run ./client/cmd/command-line-interface/main.go
 
 ## Application Features
 
