@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package chatroom;
+option go_package = "github.com/RaziyeNikookolah/chatroom-using-go-nats/api/pb";
+
+service ChatroomService {
+  rpc Send (SendRequest) returns (SendResponse);
+  rpc Show (ShowRequest) returns (ShowResponse);
+  rpc Subscribe (SubscribeRequest) returns (SubscribeResponse);
+  rpc GetActiveUsers (GetActiveUsersRequest) returns (GetActiveUsersResponse);
+}
+
+message SendRequest {
+  string userID = 1 [json_name = "userID"];
+  string username = 2 [json_name = "username"];
+  string message = 3 [json_name = "message"];
+}
+
+message SendResponse {
+  bool response = 1;
+}
+
+message ShowRequest {
+  string userID = 1 [json_name = "userID"];
+
+}
+
+message ShowResponse {
+  repeated string messages = 1;
+}
+message SubscribeRequest {
+  string userID = 1 [json_name = "userID"];
+  string username = 2 [json_name = "username"];
+}
+
+message SubscribeResponse {
+  bool response = 1;
+}
+
+message GetActiveUsersRequest {}
+
+message GetActiveUsersResponse {
+  repeated string usernames = 1;
+}
